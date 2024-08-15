@@ -139,7 +139,8 @@ kaggle.json
 
 # Rope project settings
 .ropeproject
-
+data
+**.csv
 # mkdocs documentation
 /site
 
