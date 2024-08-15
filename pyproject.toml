@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "olist-data"
+version = "0.1.0"
+description = ""
+authors = ["Claudio Pontes <claudiohpontes@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+kaggle = "^1.6.17"
+python-dotenv = "^1.0.1"
+loguru = "^0.7.2"
+dbt-core = "^1.8.5"
+dbt-postgres = "^1.8.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
