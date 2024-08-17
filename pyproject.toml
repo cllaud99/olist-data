@@ -13,6 +13,8 @@ loguru = "^0.7.2"
 dbt-core = "^1.8.5"
 dbt-postgres = "^1.8.2"
 duckdb = "^1.0.0"
+pytest = "^8.3.2"
+pydantic = "^2.8.2"
 
 
 [build-system]
