@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal, Optional, Type
+import duckdb
 
-from pydantic import BaseModel, Field, constr
+
+from pydantic import BaseModel, Field, ValidationError, constr
 
 StateType = Literal[
     "AC",
@@ -148,3 +150,40 @@ class OlistSeller(ConfigBase):
     seller_zip_code_prefix: str = Field(..., description="Prefixo do CEP do vendedor")
     seller_city: str = Field(..., description="Cidade do vendedor")
     seller_state: StateType = Field(..., description="Estado do vendedor")
+
+
+class TableValidationError(Exception):
+    """Exceção personalizada para erros de validação de tabela."""
+    pass
+
+def validate_table(conn: duckdb.DuckDBPyConnection, table_name: str, model: Type[BaseModel]):
+    """
+    Valida cada linha de uma Tabela DuckDB contra um modelo Pydantic.
+    Lança TableValidationError se alguma linha falhar na validação.
+
+    :param conn: Conexão DuckDB.
+    :param table_name: Nome da tabela DuckDB a ser validada.
+    :param model: Modelo Pydantic para validação.
+    :raises: TableValidationError
+    """
+    errors = []
+
+    # Consulta para obter todas as linhas da tabela
+    query = f"SELECT * FROM {table_name}"
+    result = conn.execute(query).fetchall()
+
+    # Obtém o nome das colunas
+    column_names = [desc[0] for desc in conn.description]
+
+    for i, row in enumerate(result):
+        row_dict = dict(zip(column_names, row))
+        try:
+            model(**row_dict)
+        except ValidationError as e:
+            errors.append(f"Linha {i} falhou na validação: {e}")
+
+    if errors:
+        error_message = "\n".join(errors)
+        raise TableValidationError(
+            f"A validação da tabela falhou com os seguintes erros:\n{error_message}"
+        )

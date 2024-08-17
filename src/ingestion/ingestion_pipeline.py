@@ -1,6 +1,8 @@
 import os
 import sys
-
+from duck import get_csv_data
+import duckdb
+from models import validate_table, OlistCustomer
 # Adiciona o diretório raiz do projeto ao sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
@@ -13,7 +15,10 @@ def run_ingestion_pipeline():
     """
     load_kaggle_credentials()
     download_path = "data/olist_lz"
+    csv_file_path = 'data/olist_lz/olist_customers_dataset.csv'
     main_extract(download_path)
+    conn, table = get_csv_data(csv_file_path, 'olist_customers')
+    validate_table(conn, table, OlistCustomer)
 
 
 if __name__ == "__main__":
