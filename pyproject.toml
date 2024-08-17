@@ -15,8 +15,20 @@ dbt-postgres = "^1.8.2"
 duckdb = "^1.0.0"
 pytest = "^8.3.2"
 pydantic = "^2.8.2"
+taskipy = "^1.13.0"
+black = "^24.8.0"
+isort = "^5.13.2"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.taskipy.tasks]
+format = """
+isort .
+black .
+sqlfluff fix dbt_dados_abertos_camara/models
+"""
+kill = "kill -9 $(lsof -t -i :8000)"
+test = "pytest -v"
