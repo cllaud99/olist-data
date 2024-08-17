@@ -1,19 +1,23 @@
-import sys
 import os
-import time 
-from dotenv import load_dotenv
-import zipfile
 import subprocess
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+import sys
+import time
+import zipfile
+
+from dotenv import load_dotenv
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.logger_config import logger
+
 
 def load_kaggle_credentials():
     """
     Carrega as credenciais do Kaggle a partir de variáveis de ambiente.
     """
     load_dotenv()
-    os.environ['KAGGLE_USERNAME'] = os.getenv('KAGGLE_USERNAME')
-    os.environ['KAGGLE_KEY'] = os.getenv('KAGGLE_KEY')
+    os.environ["KAGGLE_USERNAME"] = os.getenv("KAGGLE_USERNAME")
+    os.environ["KAGGLE_KEY"] = os.getenv("KAGGLE_KEY")
+
 
 def download_kaggle_dataset(destination_dir, dataset="olistbr/brazilian-ecommerce"):
     """
@@ -26,12 +30,13 @@ def download_kaggle_dataset(destination_dir, dataset="olistbr/brazilian-ecommerc
     logger.info("Baixando o dataset do Kaggle...")
     try:
         subprocess.run(
-            ['kaggle', 'datasets', 'download', '-d', dataset, '-p', destination_dir],
-            check=True
+            ["kaggle", "datasets", "download", "-d", dataset, "-p", destination_dir],
+            check=True,
         )
     except subprocess.CalledProcessError as e:
         logger.error(f"Erro ao baixar o dataset: {e}")
         raise
+
 
 def extract_zip_file(zip_file_path, extract_to):
     """
@@ -43,11 +48,12 @@ def extract_zip_file(zip_file_path, extract_to):
     """
     logger.info("Extraindo o arquivo ZIP...")
     try:
-        with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
             zip_ref.extractall(extract_to)
     except zipfile.BadZipFile as e:
         logger.error(f"Erro ao extrair o arquivo ZIP: {e}")
         raise
+
 
 def remove_file(file_path):
     """
@@ -63,6 +69,7 @@ def remove_file(file_path):
         logger.error(f"Erro ao remover o arquivo: {e}")
         raise
 
+
 def main_extract(destination_dir):
     """
     Realiza o processo de download, extração e limpeza do dataset.
@@ -71,7 +78,7 @@ def main_extract(destination_dir):
         destination_dir (str): O diretório de destino para os arquivos extraídos.
     """
     os.makedirs(destination_dir, exist_ok=True)
-    
+
     start_time = time.time()  # Registrar o tempo de início
 
     try:
@@ -82,10 +89,11 @@ def main_extract(destination_dir):
         logger.success("Download, extração e limpeza concluídos com sucesso!")
     except Exception as e:
         logger.error(f"Ocorreu um erro: {e}")
-    
+
     end_time = time.time()  # Registrar o tempo de término
     duration = end_time - start_time  # Calcular a duração
     logger.info(f"Tempo total da pipeline: {duration:.2f} segundos")
+
 
 if __name__ == "__main__":
     destination_dir = "dbt_project/seeds"
