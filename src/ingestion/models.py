@@ -1,9 +1,14 @@
+import os
+import sys
 from datetime import datetime
 from typing import Literal, Optional, Type
+
 import duckdb
 
-
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from pydantic import BaseModel, Field, ValidationError, constr
+
+from utils.logger_config import logger
 
 StateType = Literal[
     "AC",
@@ -123,26 +128,36 @@ class OlistOrder(ConfigBase):
     )
 
 
-class OlistProduct(ConfigBase):
+class OlistProduct(BaseModel):
     product_id: str = Field(..., description="Identificador único do produto")
-    product_category_name: str = Field(..., description="Categoria do produto")
-    product_name_length: int = Field(
-        ...,
+    product_category_name: Optional[str] = Field(
+        None, description="Categoria do produto"
+    )
+    product_name_length: Optional[int] = Field(
+        None,
         alias="product_name_length",
         description="Comprimento do nome do produto em caracteres",
     )
-    product_description_length: int = Field(
-        ...,
+    product_description_length: Optional[int] = Field(
+        None,
         alias="product_description_length",
         description="Comprimento da descrição do produto em caracteres",
     )
-    product_photos_qty: int = Field(..., description="Quantidade de fotos do produto")
-    product_weight_g: int = Field(..., description="Peso do produto em gramas")
-    product_length_cm: int = Field(
-        ..., description="Comprimento do produto em centímetros"
+    product_photos_qty: Optional[int] = Field(
+        None, description="Quantidade de fotos do produto"
     )
-    product_height_cm: int = Field(..., description="Altura do produto em centímetros")
-    product_width_cm: int = Field(..., description="Largura do produto em centímetros")
+    product_weight_g: Optional[int] = Field(
+        None, description="Peso do produto em gramas"
+    )
+    product_length_cm: Optional[int] = Field(
+        None, description="Comprimento do produto em centímetros"
+    )
+    product_height_cm: Optional[int] = Field(
+        None, description="Altura do produto em centímetros"
+    )
+    product_width_cm: Optional[int] = Field(
+        None, description="Largura do produto em centímetros"
+    )
 
 
 class OlistSeller(ConfigBase):
@@ -154,9 +169,13 @@ class OlistSeller(ConfigBase):
 
 class TableValidationError(Exception):
     """Exceção personalizada para erros de validação de tabela."""
+
     pass
 
-def validate_table(conn: duckdb.DuckDBPyConnection, table_name: str, model: Type[BaseModel]):
+
+def validate_table(
+    conn: duckdb.DuckDBPyConnection, table_name: str, model: Type[BaseModel]
+):
     """
     Valida cada linha de uma Tabela DuckDB contra um modelo Pydantic.
     Lança TableValidationError se alguma linha falhar na validação.
@@ -166,6 +185,7 @@ def validate_table(conn: duckdb.DuckDBPyConnection, table_name: str, model: Type
     :param model: Modelo Pydantic para validação.
     :raises: TableValidationError
     """
+
     errors = []
 
     # Consulta para obter todas as linhas da tabela
@@ -174,6 +194,8 @@ def validate_table(conn: duckdb.DuckDBPyConnection, table_name: str, model: Type
 
     # Obtém o nome das colunas
     column_names = [desc[0] for desc in conn.description]
+
+    logger.info(f"Validando dados {query}")
 
     for i, row in enumerate(result):
         row_dict = dict(zip(column_names, row))

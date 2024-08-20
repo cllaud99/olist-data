@@ -18,6 +18,7 @@ pydantic = "^2.8.2"
 taskipy = "^1.13.0"
 black = "^24.8.0"
 isort = "^5.13.2"
+boto3 = "^1.35.1"
 
 
 [build-system]

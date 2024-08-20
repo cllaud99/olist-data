@@ -1,20 +1,20 @@
 import os
 import sys
 from typing import List
+
 import duckdb
 
-from loguru import logger  # Use a única importação para evitar conflitos
-
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from utils.logger_config import logger  # Garanta que essa importação seja necessária
+from utils.logger_config import logger
 
 
 def load_aws_credentials(duckdb_con, profile: str):
     # Função ainda não implementada
     pass
 
+
 def write_to_s3_from_duckdb(
-        duckdb_con, table: str, s3_path: str, timestamp_column: str
+    duckdb_con, table: str, s3_path: str, timestamp_column: str
 ):
     logger.info(f"Escrevendo dados para S3 {s3_path} / {table}")
     duckdb_con.execute(
@@ -29,6 +29,7 @@ def write_to_s3_from_duckdb(
         (FORMAT PARQUET, PARTITION BY (year, month), OVERWRITE OR IGNORE 1, COMPRESSION 'ZSTD')
         """
     )
+
 
 def get_csv_data(csv_file_path: str, table: str):
     logger.info(f"Criando tabela a partir do CSV {csv_file_path}")
@@ -52,14 +53,15 @@ def get_csv_data(csv_file_path: str, table: str):
             print(row)
 
         return conn, table  # Retorne a conexão e o nome da tabela
-        
+
     except Exception as e:
         print(f"Erro: {e}")
         if conn is not None:
             conn.close()
         raise  # Re-raise the exception after logging
 
+
 if __name__ == "__main__":
     # Substitua pelo caminho real do seu arquivo CSV
-    csv_file_path = 'data/olist_lz/olist_customers_dataset.csv'
-    get_csv_data(csv_file_path, 'olist_customers')
+    csv_file_path = "data/olist_lz/olist_customers_dataset.csv"
+    get_csv_data(csv_file_path, "olist_customers")
