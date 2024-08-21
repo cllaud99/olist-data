@@ -39,7 +39,7 @@ def run_ingestion_pipeline():
     }
 
     for item in mapeamento:
-        class_reference = mapeamento[item]  # Acessa a classe associada à chave
+        class_reference = mapeamento[item]
         csv_file_path =  f"{download_path}/{item}_dataset.csv"
         print(f"Classe: {class_reference}, Caminho do CSV: {csv_file_path}")
         table_name = item

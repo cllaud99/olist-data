@@ -395,6 +395,26 @@ sqlparse = ">=0.5.0,<0.6.0"
 typing-extensions = ">=4.4"
 
 [[package]]
+name = "dbt-duckdb"
+version = "1.8.3"
+description = "The duckdb adapter plugin for dbt (data build tool)"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "dbt_duckdb-1.8.3-py3-none-any.whl", hash = "sha256:7d2651a383c97984ce130d5cd6ca3294590fd1f092e48b5d448a3a5e6f42dc72"},
+    {file = "dbt_duckdb-1.8.3.tar.gz", hash = "sha256:c33df9ba1d4a1ac6ff2731816ad11c14b67d256a873e2ae16d85e69b7ceffb9a"},
+]
+
+[package.dependencies]
+dbt-adapters = ">=1,<2"
+dbt-common = ">=1,<2"
+dbt-core = ">=1.8.0"
+duckdb = ">=1.0.0"
+
+[package.extras]
+glue = ["boto3", "mypy-boto3-glue"]
+
+[[package]]
 name = "dbt-extractor"
 version = "0.5.1"
 description = "A tool to analyze and extract information from Jinja used in dbt projects."
@@ -1776,4 +1796,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "30357d121f54fcf2c1c2f5d66005eced1d8c35718a8332ce6eb2cb6d73320344"
+content-hash = "c7593746ae83b2227f714b0d4a8faf6e11ab183c5e33e3f2d407976b03dd541c"

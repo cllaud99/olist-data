@@ -169,8 +169,17 @@ class OlistSeller(ConfigBase):
 
 class TableValidationError(Exception):
     """Exceção personalizada para erros de validação de tabela."""
+    
+    def __init__(self, errors):
+        super().__init__("A validação da tabela falhou.")
+        self.errors = errors
+        self.save_errors_to_file()
 
-    pass
+    def save_errors_to_file(self):
+        """Grava os erros de validação em um arquivo 'erros.txt'."""
+        error_message = "\n".join(self.errors)
+        with open("erros.txt", "w") as error_file:
+            error_file.write(error_message)
 
 
 def validate_table(
@@ -178,15 +187,13 @@ def validate_table(
 ):
     """
     Valida cada linha de uma Tabela DuckDB contra um modelo Pydantic.
-    Lança TableValidationError se alguma linha falhar na validação.
+    Lança ValidationError se alguma linha falhar na validação.
 
     :param conn: Conexão DuckDB.
     :param table_name: Nome da tabela DuckDB a ser validada.
     :param model: Modelo Pydantic para validação.
-    :raises: TableValidationError
+    :raises: ValidationError
     """
-
-    errors = []
 
     # Consulta para obter todas as linhas da tabela
     query = f"SELECT * FROM {table_name}"
@@ -195,17 +202,12 @@ def validate_table(
     # Obtém o nome das colunas
     column_names = [desc[0] for desc in conn.description]
 
-    logger.info(f"Validando dados {query}")
+    logger.info(f"Validando dados da consulta: {query}")
 
     for i, row in enumerate(result):
         row_dict = dict(zip(column_names, row))
         try:
             model(**row_dict)
         except ValidationError as e:
-            errors.append(f"Linha {i} falhou na validação: {e}")
-
-    if errors:
-        error_message = "\n".join(errors)
-        raise TableValidationError(
-            f"A validação da tabela falhou com os seguintes erros:\n{error_message}"
-        )
+            logger.error(f"Linha {i} falhou na validação: {e}")
+            raise  # Interrompe a execução ao encontrar o primeiro erro

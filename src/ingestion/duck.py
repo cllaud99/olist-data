@@ -8,29 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.logger_config import logger
 
 
-def load_aws_credentials(duckdb_con, profile: str):
-    # Função ainda não implementada
-    pass
-
-
-def write_to_s3_from_duckdb(
-    duckdb_con, table: str, s3_path: str, timestamp_column: str
-):
-    logger.info(f"Escrevendo dados para S3 {s3_path} / {table}")
-    duckdb_con.execute(
-        f"""
-        COPY (
-            SELECT *,
-                EXTRACT(YEAR FROM {timestamp_column}) AS year,
-                EXTRACT(MONTH FROM {timestamp_column}) AS month
-            FROM {table}
-        )
-        TO '{s3_path}/{table}'
-        (FORMAT PARQUET, PARTITION BY (year, month), OVERWRITE OR IGNORE 1, COMPRESSION 'ZSTD')
-        """
-    )
-
-
 def get_csv_data(csv_file_path: str, table: str):
     logger.info(f"Criando tabela a partir do CSV {csv_file_path}")
     conn = None
