@@ -3,12 +3,11 @@ dbt_project:
     dev:
       type: duckdb
       path: /tmp/dbt.duckdb
-      extensions:
-        - httpfs
-        - parquet
-      secrets:
-        - type: s3
-          region: us-east-1
-          key_id: "{{ env_var('MINIO_ROOT_USER') }}"
-          secret: "{{ env_var('MINIO_ROOT_PASSWORD') }}"
+      filesystems:
+        - fs: s3
+          anon: false
+          key: "minio-admin-user"
+          secret: "minio-admin-pass"
+          client_kwargs:
+            endpoint_url: "http://localhost:9000"  # MinIO endpoint
   target: dev

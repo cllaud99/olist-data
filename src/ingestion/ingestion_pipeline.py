@@ -45,7 +45,7 @@ def run_ingestion_pipeline():
         table_name = item
         conn, table = get_csv_data(csv_file_path, table_name)
         validate_table(conn, table, mapeamento[item])
-        upload_file(bucket_name, csv_file_path, f'lz_{table_name}' )
+        upload_file(bucket_name, csv_file_path, f'raw_{table_name}.csv' )
 
 
 if __name__ == "__main__":

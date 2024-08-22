@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: olist_customers
+    description: "Fonte de dados com informações dos clientes da Olist"
+    tables:
+      - name: raw_customers
+        description: "Dados brutos dos clientes"
+        columns:
+          - name: customer_id
+            description: "Identificador único do cliente"
+          - name: customer_unique_id
+            description: "Identificador único por cliente, considerando que um cliente pode ter mais de um ID"
+          - name: customer_zip_code_prefix
+            description: "Prefixo do código postal do cliente"
+          - name: customer_city
+            description: "Cidade do cliente"
+          - name: customer_state
+            description: "Estado do cliente"
