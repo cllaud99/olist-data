@@ -39,6 +39,5 @@ def get_csv_data(csv_file_path: str, table: str):
 
 
 if __name__ == "__main__":
-    # Substitua pelo caminho real do seu arquivo CSV
     csv_file_path = "data/olist_lz/olist_customers_dataset.csv"
     get_csv_data(csv_file_path, "olist_customers")

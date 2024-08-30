@@ -96,6 +96,6 @@ def main_extract(destination_dir):
 
 
 if __name__ == "__main__":
-    destination_dir = "dbt_project/seeds"
+    destination_dir = "data/olist_lz"
     load_kaggle_credentials()
     main_extract(destination_dir)

@@ -169,7 +169,7 @@ class OlistSeller(ConfigBase):
 
 class TableValidationError(Exception):
     """Exceção personalizada para erros de validação de tabela."""
-    
+
     def __init__(self, errors):
         super().__init__("A validação da tabela falhou.")
         self.errors = errors

@@ -1,9 +1,7 @@
 import os
 import sys
-
-import duckdb
+from awss3 import upload_files_to_s3, list_files, delete_local_files
 from duck import get_csv_data
-from minio import create_bucket, upload_file
 from models import (
     OlistCustomer,
     OlistGeolocation,
@@ -15,6 +13,7 @@ from models import (
     OlistSeller,
     validate_table,
 )
+from kaggle import main_extract
 
 # Adiciona o diretório raiz do projeto ao sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
@@ -27,15 +26,12 @@ def run_ingestion_pipeline():
     Executa o pipeline de ingestão de dados do Kaggle.
     """
 
-    bucket_name = "raw-olist"
-
-    create_bucket(bucket_name)
-
     load_kaggle_credentials()
 
-    download_path = "data/olist_lz"
+    download_path = "data"
 
-    # main_extract(download_path)
+    main_extract(download_path)
+
 
     mapeamento = {
         "olist_customers": OlistCustomer,
@@ -55,8 +51,10 @@ def run_ingestion_pipeline():
         table_name = item
         conn, table = get_csv_data(csv_file_path, table_name)
         validate_table(conn, table, mapeamento[item])
-        upload_file(bucket_name, csv_file_path, f"raw_{table_name}.csv")
 
+    files = list_files('data')
+    upload_files_to_s3(files=files)
+    delete_local_files(files)
 
 if __name__ == "__main__":
     run_ingestion_pipeline()
